@@ -23,17 +23,19 @@ Website for **WiTCON 2027**, Women in Computer Science's annual conference
 
 ## Prerequisites
 
-Before you start, make sure you have these installed globally:
+Before you start, make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) — Node.js 20.19+ or 22.12+
+- npm — included with Node.js
+- Git
+- VS Code (recommended)
+
+You can check your versions with:
 
 ```bash
 node -v
 npm -v
-tsc -v
-```
-
-If any of those commands aren't recognized, install [Node.js](https://nodejs.org/) (which includes npm) and then TypeScript (`npm install -g typescript`).
-
-You'll also need access to our Supabase project dashboard — ask a team lead to add you as a project member. There's no in-app login for teammates; all data review/check-in happens directly in Supabase Studio (see below).
+git --version
 
 ---
 

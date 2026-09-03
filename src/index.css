@@ -4,11 +4,6 @@
 /* Please consider this file like you would a globals.css file, these are CSS styling settings that apply to the entirety of the page */
 
 @theme {
-  /* ========================================
-     WiTCON 2027 — Color Palette
-     Botanical Spring / Fairy Garden
-     ======================================== */
-
   --color-witcon-forest: #6c8123;
   --color-witcon-deep-forest: #546a30;
   --color-witcon-sage: #bede87;
