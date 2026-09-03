@@ -1,0 +1,17 @@
+@import "tailwindcss";
+/* Please consider this file like you would a globals.css file, these are CSS styling settings that apply to the entirety of the page */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
