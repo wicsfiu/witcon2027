@@ -1,5 +1,48 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@tailwind utilities;
+
 /* Please consider this file like you would a globals.css file, these are CSS styling settings that apply to the entirety of the page */
+
+@theme {
+  /* ========================================
+     WiTCON 2027 — Color Palette
+     Botanical Spring / Fairy Garden
+     ======================================== */
+
+  --color-witcon-forest: #6c8123;
+  --color-witcon-deep-forest: #546a30;
+  --color-witcon-sage: #bede87;
+
+  --color-witcon-brown: #6e4127;
+  --color-witcon-terracotta: #b36436;
+
+  --color-witcon-pink: #db6591;
+  --color-witcon-soft-pink: #faa2c3;
+
+  --color-witcon-lavender: #9c83c6;
+  --color-witcon-soft-lavender: #c3acea;
+
+  --color-witcon-blue: #5a94e6;
+  --color-witcon-soft-blue: #99c3ff;
+
+  --color-witcon-yellow: #ffe09e;
+  --color-witcon-peach: #ffc5a3;
+
+  --color-witcon-burgundy: #81193f;
+
+  --color-witcon-cream: #fff6e3;
+
+  /* ========================================
+     WiTCON 2027 — Typography
+     ======================================== */
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Manrope', sans-serif;
+}
+
+/* ========================================
+   Global styles
+   ======================================== */
 
 html {
   scroll-behavior: smooth;
@@ -9,9 +52,40 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-witcon-cream);
+  color: var(--color-witcon-deep-forest);
+  font-family: var(--font-body);
 }
 
 * {
   box-sizing: border-box;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

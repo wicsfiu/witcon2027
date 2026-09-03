@@ -1,75 +1,90 @@
-# React + TypeScript + Vite
+# WiTCON 2027
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website for **WiTCON 2027**, Women in Computer Science's annual conference
 
-Currently, two official plugins are available:
+**Live site:** _add Vercel URL once deployed_
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer              | Tool                          |
+| ------------------ | ----------------------------- |
+| Frontend framework | React (via Vite)              |
+| Language           | TypeScript                    |
+| Styling            | Tailwind CSS v4               |
+| Backend / DB       | Supabase (Postgres + Storage) |
+| Animations         | Framer Motion, CSS keyframes  |
+| Hosting            | Vercel                        |
 
-## Expanding the ESLint configuration
+> **Note on Tailwind v4:** there is no `tailwind.config.js`. All global styles/theme tokens live in `src/index.css`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Before you start, make sure you have these installed globally:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+node -v
+npm -v
+tsc -v
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+If any of those commands aren't recognized, install [Node.js](https://nodejs.org/) (which includes npm) and then TypeScript (`npm install -g typescript`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+You'll also need access to our Supabase project dashboard — ask a team lead to add you as a project member. There's no in-app login for teammates; all data review/check-in happens directly in Supabase Studio (see below).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
 
-```
+## Local Setup
+
+1. **Clone the repo**
+
+   ```bash
+   git clone https://github.com/wicsfiu/witcon2027.git
+   cd witcon2027
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+
+   Copy the example file and fill in real values (get these from a team lead or the Supabase dashboard → Project Settings → API):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   ```
+   VITE_SUPABASE_URL=your-project-url
+   VITE_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+   **Never commit `.env`.** Only the anon (public) key goes in the frontend — the service role key is never used anywhere in this repo.
+
+4. **Run the app locally**
+   ```bash
+   npm run dev
+   ```
+   The site will be running at `http://localhost:5173/`.
+
+---
+
+## Working with Supabase
+
+- We're on Supabase's **free tier**. Know the limits:
+  - 500MB database
+  - **1GB file storage**
+  - Free projects pause after 7 days with no API activity.
+  - **No automatic backups:** We must manually export our data because Supabase won’t create backup copies for us if we accidentally delete or overwrite something.
+
+---
+
+## Deployment
+
+Deployed on Vercel, connected to this repo. Pushes to `main` deploy to production; PRs get preview deployments automatically. Environment variables are set in the Vercel project settings (mirror whatever's in `.env.example`).
