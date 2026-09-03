@@ -1,6 +1,6 @@
 # WiTCON 2027
 
-Website for **WiTCON 2027**, Women in Computer Science's annual conference
+Website for **WiTCON 2027**, Women in Computer Science's annual conference.
 
 **Live site:** _add Vercel URL once deployed_
 
@@ -8,22 +8,23 @@ Website for **WiTCON 2027**, Women in Computer Science's annual conference
 
 ## Tech Stack
 
-| Layer              | Tool                          |
-| ------------------ | ----------------------------- |
-| Frontend framework | React (via Vite)              |
-| Language           | TypeScript                    |
-| Styling            | Tailwind CSS v4               |
-| Backend / DB       | Supabase (Postgres + Storage) |
-| Animations         | Framer Motion, CSS keyframes  |
-| Hosting            | Vercel                        |
+| Layer | Tool |
+|---|---|
+| Frontend framework | React + Vite |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Animations | Framer Motion + CSS |
+| Routing | React Router |
+| Backend / Database | Supabase (planned) |
+| Hosting | Vercel (planned) |
 
-> **Note on Tailwind v4:** there is no `tailwind.config.js`. All global styles/theme tokens live in `src/index.css`.
+> **Note on Tailwind CSS v4:** This project uses the current Tailwind v4 Vite integration. There is no `tailwind.config.js`. Global styles and WiTCON theme tokens are defined in `src/index.css`.
 
 ---
 
 ## Prerequisites
 
-Before you start, make sure you have the following installed:
+Before starting, make sure you have the following installed:
 
 - [Node.js](https://nodejs.org/) — Node.js 20.19+ or 22.12+
 - npm — included with Node.js
@@ -36,54 +37,119 @@ You can check your versions with:
 node -v
 npm -v
 git --version
+````
+
+> **Note:** You do **not** need to install TypeScript globally. TypeScript is installed locally as a project dependency when you run `npm install`.
 
 ---
 
 ## Local Setup
 
-1. **Clone the repo**
+### 1. Clone the repository
 
-   ```bash
-   git clone https://github.com/wicsfiu/witcon2027.git
-   cd witcon2027
-   ```
+```bash
+git clone https://github.com/wicsfiu/witcon2027.git
+cd witcon2027
+```
 
-2. **Install dependencies**
+### 2. Install dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-3. **Set up environment variables**
+### 3. Start the development server
 
-   Copy the example file and fill in real values (get these from a team lead or the Supabase dashboard → Project Settings → API):
+```bash
+npm run dev
+```
 
-   ```bash
-   cp .env.example .env
-   ```
+The site will be available at:
 
-   ```
-   VITE_SUPABASE_URL=your-project-url
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   ```
+```text
+http://localhost:5173/
+```
 
-   **Never commit `.env`.** Only the anon (public) key goes in the frontend — the service role key is never used anywhere in this repo.
-
-4. **Run the app locally**
-   ```bash
-   npm run dev
-   ```
-   The site will be running at `http://localhost:5173/`.
+The development server automatically updates when you save changes.
 
 ---
 
-## Working with Supabase
+## Responsive Design
+
+Every component should be tested on:
+
+* Mobile
+* Tablet
+* Desktop
+
+Example:
+
+```tsx
+<h1 className="text-4xl sm:text-5xl lg:text-7xl">
+  WiTCON 2027
+</h1>
+```
+
+---
+
+## Performance
+
+Performance is especially important because the website should work well on mobile devices and slower connections.
+
+When adding visual effects:
+
+### Prefer
+
+* CSS transforms
+* CSS opacity transitions
+* SVG graphics
+* Optimized images
+* Small decorative elements
+* Framer Motion for meaningful UI animation
+
+---
+
+## Supabase
+
+Supabase is planned for WiTCON 2027 and will primarily be used for:
+
+* Registration
+* Conference-related dynamic data
+* Potential file storage
+* Other backend functionality as needed
+
+Supabase is **not required for the current frontend development stage**.
+
+When Supabase integration is ready, team members will be given the required environment variables.
+
+### Working with Supabase
 
 - We're on Supabase's **free tier**. Know the limits:
   - 500MB database
   - **1GB file storage**
   - Free projects pause after 7 days with no API activity.
   - **No automatic backups:** We must manually export our data because Supabase won’t create backup copies for us if we accidentally delete or overwrite something.
+
+### Environment Variables
+
+Supabase credentials will be stored locally in:
+
+```text
+.env
+```
+
+Example:
+
+```env
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Never commit `.env` to GitHub.
+
+Only the Supabase public/anon key may be used in frontend code.
+
+The Supabase service role key must **never** be placed in the frontend or committed to this repository.
 
 ---
 
