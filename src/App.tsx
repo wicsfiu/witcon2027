@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Footer from './components/layout/Footer';
 import Navbar from './components/layout/Navbar';
 
-import About from './pages/About';
+import OurStory from './pages/OurStory';
 import Home from './pages/Home';
 import Registration from './pages/Registration';
 
@@ -16,7 +16,7 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/our-story" element={<OurStory />} />
             <Route path="/registration" element={<Registration />} />
           </Routes>
         </main>
