@@ -6,6 +6,7 @@ import Navbar from './components/layout/Navbar';
 import OurStory from './pages/OurStory';
 import Home from './pages/Home';
 import Registration from './pages/Registration';
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/our-story" element={<OurStory />} />
             <Route path="/registration" element={<Registration />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
 

@@ -30,7 +30,7 @@ export default function Footer() {
               </Link>
 
               <Link
-                to="/about"
+                to="/our-story"
                 className="transition-colors hover:text-witcon-soft-pink"
               >
                 About

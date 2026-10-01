@@ -5,6 +5,7 @@ const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Our Story', path: '/our-story' },
   { label: 'Registration', path: '/registration' },
+  { label: 'Profile', path: '/profile' },
 ];
 
 export default function Navbar() {

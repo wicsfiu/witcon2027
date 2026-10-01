@@ -1,4 +1,5 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 
 export default function Registration() {
   const [resume, setResume] = useState<File | null>(null);
