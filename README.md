@@ -8,15 +8,15 @@ Website for **WiTCON 2027**, Women in Computer Science's annual conference.
 
 ## Tech Stack
 
-| Layer | Tool |
-|---|---|
-| Frontend framework | React + Vite |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Animations | Framer Motion + CSS |
-| Routing | React Router |
-| Backend / Database | Supabase (planned) |
-| Hosting | Vercel (planned) |
+| Layer              | Tool                |
+| ------------------ | ------------------- |
+| Frontend framework | React + Vite        |
+| Language           | TypeScript          |
+| Styling            | Tailwind CSS v4     |
+| Animations         | Framer Motion + CSS |
+| Routing            | React Router        |
+| Backend / Database | Supabase            |
+| Hosting            | Vercel (planned)    |
 
 > **Note on Tailwind CSS v4:** This project uses the current Tailwind v4 Vite integration. There is no `tailwind.config.js`. Global styles and WiTCON theme tokens are defined in `src/index.css`.
 
@@ -37,7 +37,7 @@ You can check your versions with:
 node -v
 npm -v
 git --version
-````
+```
 
 > **Note:** You do **not** need to install TypeScript globally. TypeScript is installed locally as a project dependency when you run `npm install`.
 
@@ -78,16 +78,14 @@ The development server automatically updates when you save changes.
 
 Every component should be tested on:
 
-* Mobile
-* Tablet
-* Desktop
+- Mobile
+- Tablet
+- Desktop
 
 Example:
 
 ```tsx
-<h1 className="text-4xl sm:text-5xl lg:text-7xl">
-  WiTCON 2027
-</h1>
+<h1 className="text-4xl sm:text-5xl lg:text-7xl">WiTCON 2027</h1>
 ```
 
 ---
@@ -100,27 +98,25 @@ When adding visual effects:
 
 ### Prefer
 
-* CSS transforms
-* CSS opacity transitions
-* SVG graphics
-* Optimized images
-* Small decorative elements
-* Framer Motion for meaningful UI animation
+- CSS transforms
+- CSS opacity transitions
+- SVG graphics
+- Optimized images
+- Small decorative elements
+- Framer Motion for meaningful UI animation
 
 ---
 
 ## Supabase
 
-Supabase is planned for WiTCON 2027 and will primarily be used for:
+Supabase is used for WiTCON 2027 authentication, registration, and private resume storage:
 
-* Registration
-* Conference-related dynamic data
-* Potential file storage
-* Other backend functionality as needed
+- Registration
+- Conference-related dynamic data
+- Potential file storage
+- Other backend functionality as needed
 
-Supabase is **not required for the current frontend development stage**.
-
-When Supabase integration is ready, team members will be given the required environment variables.
+The frontend requires the two public client variables in `.env`.
 
 ### Working with Supabase
 
@@ -147,7 +143,36 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 
 Never commit `.env` to GitHub.
 
-Only the Supabase public/anon key may be used in frontend code.
+Never add a service-role key or Google client secret to Vite environment
+variables. The publishable/anon key is safe for browser use only because the
+database and storage are protected by RLS.
+
+### Authentication and OAuth setup
+
+Apply `supabase/migrations/20261008180000_registration_security.sql` to the
+intended Supabase project after confirming that the existing `registrations`
+columns match the fields used by `src/data/registration.ts`. Resolve duplicate
+`user_id` values before applying the unique index.
+
+For local development:
+
+- Supabase Auth URL Configuration must allow `http://localhost:5173/**`.
+- Google Cloud's authorized redirect URI must be the exact Supabase Google
+  provider callback URL (not the React `/auth/callback` route).
+- OAuth returns the browser to `http://localhost:5173/auth/callback`.
+
+For production, add the deployed app origin and its callback URL to Supabase's
+allowed redirect URLs and configure the deployed origin as a Google authorized
+JavaScript origin. Keep the provider callback URI supplied by Supabase.
+
+Email confirmation is controlled by Supabase Auth. If it remains enabled,
+new email/password users must confirm their address before logging in; attendee
+data is not created until an authenticated session exists.
+
+The `resumes` bucket must remain private. The migration limits it to PDF files
+of 600 KiB and restricts object paths to the authenticated user's
+`<user-id>/resume.pdf`. Client-side checks are only a usability measure, not a
+security boundary.
 
 The Supabase service role key must **never** be placed in the frontend or committed to this repository.
 

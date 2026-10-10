@@ -84,3 +84,33 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+.form-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(110, 65, 39, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-witcon-brown);
+  outline: none;
+  transition: all 150ms ease;
+}
+
+.form-input::placeholder {
+  color: rgba(110, 65, 39, 0.45);
+}
+
+.form-input:focus {
+  border-color: var(--color-witcon-pink);
+  box-shadow: 0 0 0 2px rgba(250, 162, 195, 0.35);
+}
+
+.form-input[readonly] {
+  opacity: 0.7;
+}
+
+select.form-input {
+  cursor: pointer;
+}

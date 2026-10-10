@@ -1,103 +1,160 @@
-import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { signUp } from '../data/auth';
+import {
+  createRegistration,
+  getRegistration,
+  hasRegistration,
+  uploadResume,
+} from '../data/registration.ts';
 
 export default function Registration() {
+  const { session } = useAuth();
+  const navigate = useNavigate();
+  const didSubmit = useRef(false);
+
   const [resume, setResume] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    confirmEmail: "",
-    password: "",
-    dateOfBirth: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    confirmEmail: '',
+    password: '',
+    dateOfBirth: '',
 
-    country: "",
-    state: "",
+    country: '',
+    state: '',
 
-    linkedin: "",
-    discord: "",
-    github: "",
-    website: "",
+    linkedin: '',
+    discord: '',
+    github: '',
 
-    race: "",
-    raceOther: "",
-    gender: "",
-    genderOther: "",
+    race: '',
+    raceOther: '',
+    gender: '',
+    genderOther: '',
 
-    levelOfStudy: "",
-    yearLevel: "",
-    fieldOfStudy: "",
-    fieldOther: "",
-    school: "",
-    schoolOther: "",
+    levelOfStudy: '',
+    yearLevel: '',
+    fieldOfStudy: '',
+    fieldOther: '',
+    school: '',
+    schoolOther: '',
 
-    shirtSize: "",
-    foodAllergies: "",
-    additionalInformation: "",
+    shirtSize: '',
+    foodAllergies: '',
+    additionalInformation: '',
 
     codeOfConduct: false,
     photographyConsent: false,
   });
 
+  // Already registered? Send them to their profile.
+  useEffect(() => {
+    if (!session || didSubmit.current) return;
+    void hasRegistration(session.user.id)
+      .then((exists) => {
+        if (exists) navigate('/profile', { replace: true });
+      })
+      .catch(() => {
+        setError('We could not verify your registration status. Please try again.');
+      });
+  }, [session, navigate]);
+
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : value,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
   const handleResumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setError('');
 
     if (!file) {
       setResume(null);
       return;
     }
 
-    if (file.type !== "application/pdf") {
-      alert("Please upload a PDF file.");
-      e.target.value = "";
+    if (file.type !== 'application/pdf') {
+      setError('Please upload a PDF file.');
+      e.target.value = '';
+      setResume(null);
       return;
     }
 
     if (file.size > 600 * 1024) {
-      alert("Resume must be 600 KB or smaller.");
-      e.target.value = "";
+      setError('Resume must be 600 KB or smaller.');
+      e.target.value = '';
+      setResume(null);
       return;
     }
 
     setResume(file);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
 
-    if (formData.email !== formData.confirmEmail) {
-      alert("Email addresses do not match.");
+    if (!session && formData.email !== formData.confirmEmail) {
+      setError('Email addresses do not match.');
+      return;
+    }
+
+    if (!session && formData.password.length < 10) {
+      setError('Password must be at least 10 characters.');
       return;
     }
 
     if (!resume) {
-      alert("Please upload your resume.");
+      setError('Please upload your resume.');
+      return;
+    }
+
+    const email = session?.user.email ?? formData.email.trim();
+    if (!email) {
+      setError('Please provide an email address for your registration.');
       return;
     }
 
     if (!formData.codeOfConduct) {
-      alert("You must agree to the WiTCON Code of Conduct.");
+      setError('You must agree to the WiTCON Code of Conduct.');
       return;
     }
 
-    // Supabase submission will be added here later.
-    setSubmitted(true);
+    didSubmit.current = true;
+    setSubmitting(true);
+
+    try {
+      // 1. Account (skipped if already logged in, e.g. retrying after a failure)
+      const userId = session?.user.id ?? (await signUp(formData.email.trim(), formData.password));
+      // 2. Registration row (skipped if a previous attempt already created it)
+      const existingRegistration = await getRegistration(userId);
+      if (!existingRegistration) {
+        await createRegistration(userId, email, formData);
+      }
+
+      // 3. Resume
+      await uploadResume(userId, resume);
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -110,9 +167,14 @@ export default function Registration() {
             Registration Successful!
           </h1>
 
-          <p className="mt-4 text-witcon-brown">
-            Thank you for registering for WiTCON 2027!
-          </p>
+          <p className="mt-4 text-witcon-brown">Thank you for registering for WiTCON 2027!</p>
+
+          <Link
+            to="/profile"
+            className="mt-6 inline-block font-semibold text-witcon-forest underline"
+          >
+            View your profile
+          </Link>
         </div>
       </section>
     );
@@ -121,7 +183,6 @@ export default function Registration() {
   return (
     <section className="px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
       <div className="mx-auto max-w-7xl">
-
         <div className="mb-10 text-center">
           <h1 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
             Welcome to WiTCON 2027!
@@ -130,15 +191,22 @@ export default function Registration() {
           <p className="mt-2 font-display text-xl font-semibold text-witcon-burgundy sm:text-2xl">
             Please register here!
           </p>
+
+          {!session && (
+            <p className="mt-3 text-sm text-witcon-brown">
+              Already have an account?{' '}
+              <Link to="/login" className="font-semibold underline">
+                Log in
+              </Link>
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-
           {/* =========================================
               PERSONAL INFORMATION + PROFILE LINKS
           ========================================= */}
           <div className="grid gap-5 lg:grid-cols-2">
-
             {/* Personal Information */}
             <div className="rounded-2xl border border-witcon-sage bg-witcon-sage/30 p-5 shadow-sm">
               <h2 className="mb-5 font-display text-2xl font-bold text-witcon-deep-forest">
@@ -146,7 +214,6 @@ export default function Registration() {
               </h2>
 
               <div className="grid gap-4 sm:grid-cols-2">
-
                 {/* First Name */}
                 <div>
                   <label
@@ -160,6 +227,7 @@ export default function Registration() {
                     id="firstName"
                     name="firstName"
                     type="text"
+                    autoComplete="given-name"
                     required
                     value={formData.firstName}
                     onChange={handleChange}
@@ -180,6 +248,7 @@ export default function Registration() {
                     id="lastName"
                     name="lastName"
                     type="text"
+                    autoComplete="family-name"
                     required
                     value={formData.lastName}
                     onChange={handleChange}
@@ -200,52 +269,60 @@ export default function Registration() {
                     id="email"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     required
-                    value={formData.email}
+                    readOnly={!!session?.user.email}
+                    value={session?.user.email ?? formData.email}
                     onChange={handleChange}
                     className="form-input"
                   />
                 </div>
 
-                {/* Confirm Email */}
-                <div>
-                  <label
-                    htmlFor="confirmEmail"
-                    className="mb-1.5 block text-sm font-semibold text-witcon-brown"
-                  >
-                    Confirm Email *
-                  </label>
+                {/* Confirm Email + Password (only when creating an account) */}
+                {!session && (
+                  <>
+                    <div>
+                      <label
+                        htmlFor="confirmEmail"
+                        className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+                      >
+                        Confirm Email *
+                      </label>
 
-                  <input
-                    id="confirmEmail"
-                    name="confirmEmail"
-                    type="email"
-                    required
-                    value={formData.confirmEmail}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
+                      <input
+                        id="confirmEmail"
+                        name="confirmEmail"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        value={formData.confirmEmail}
+                        onChange={handleChange}
+                        className="form-input"
+                      />
+                    </div>
 
-                {/* Password */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-1.5 block text-sm font-semibold text-witcon-brown"
-                  >
-                    Password *
-                  </label>
+                    <div>
+                      <label
+                        htmlFor="password"
+                        className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+                      >
+                        Password * (10+ characters)
+                      </label>
 
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        minLength={10}
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="form-input"
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* Date of Birth */}
                 <div>
@@ -345,7 +422,6 @@ export default function Registration() {
               </h2>
 
               <div className="space-y-4">
-
                 {/* LinkedIn */}
                 <div>
                   <label
@@ -379,7 +455,7 @@ export default function Registration() {
                     id="discord"
                     name="discord"
                     type="text"
-                    placeholder="username#1234"
+                    placeholder="username"
                     value={formData.discord}
                     onChange={handleChange}
                     className="form-input"
@@ -406,26 +482,22 @@ export default function Registration() {
                   />
                 </div>
 
-
                 {/* Resume */}
                 <div>
-                  <label
-                    htmlFor="resume"
-                    className="mb-1.5 block text-sm font-semibold text-witcon-pink"
-                  >
+                  <span className="mb-1.5 block text-sm font-semibold text-witcon-pink">
                     Resume Upload *
-                  </label>
+                  </span>
 
                   <label
                     htmlFor="resume"
-                    className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-witcon-lavender bg-white/60 px-4 py-6 text-center transition hover:bg-white"
+                    className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-witcon-lavender bg-white/60 px-4 py-6 text-center transition hover:bg-white focus-within:ring-2 focus-within:ring-witcon-pink"
                   >
-                    <span className="text-2xl">📄</span>
+                    <span className="text-2xl" aria-hidden="true">
+                      📄
+                    </span>
 
                     <span className="mt-2 text-sm font-semibold text-witcon-brown">
-                      {resume
-                        ? resume.name
-                        : "Click to upload your resume"}
+                      {resume ? resume.name : 'Click to upload your resume'}
                     </span>
 
                     <span className="mt-1 text-xs text-witcon-brown/70">
@@ -438,7 +510,7 @@ export default function Registration() {
                       type="file"
                       accept=".pdf,application/pdf"
                       onChange={handleResumeChange}
-                      className="hidden"
+                      className="sr-only"
                     />
                   </label>
                 </div>
@@ -450,7 +522,6 @@ export default function Registration() {
               DEMOGRAPHICS + ACADEMICS + ADDITIONAL
           ========================================= */}
           <div className="grid gap-5 lg:grid-cols-3">
-
             {/* Demographics */}
             <div className="rounded-2xl border border-witcon-soft-pink bg-witcon-soft-pink/40 p-5 shadow-sm">
               <h2 className="mb-5 font-display text-2xl font-bold text-witcon-pink">
@@ -458,7 +529,6 @@ export default function Registration() {
               </h2>
 
               <div className="space-y-4">
-
                 {/* Race */}
                 <div>
                   <label
@@ -481,27 +551,19 @@ export default function Registration() {
                       American Indian or Alaska Native
                     </option>
                     <option value="Asian">Asian</option>
-                    <option value="Black or African American">
-                      Black or African American
-                    </option>
-                    <option value="Hispanic or Latino">
-                      Hispanic or Latino
-                    </option>
+                    <option value="Black or African American">Black or African American</option>
+                    <option value="Hispanic or Latino">Hispanic or Latino</option>
                     <option value="Native Hawaiian or Pacific Islander">
                       Native Hawaiian or Pacific Islander
                     </option>
                     <option value="White">White</option>
-                    <option value="Two or More Races">
-                      Two or More Races
-                    </option>
-                    <option value="Prefer not to say">
-                      Prefer not to say
-                    </option>
+                    <option value="Two or More Races">Two or More Races</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
 
-                {formData.race === "Other" && (
+                {formData.race === 'Other' && (
                   <div>
                     <label
                       htmlFor="raceOther"
@@ -543,14 +605,12 @@ export default function Registration() {
                     <option value="Woman">Woman</option>
                     <option value="Man">Man</option>
                     <option value="Non-binary">Non-binary</option>
-                    <option value="Prefer not to say">
-                      Prefer not to say
-                    </option>
+                    <option value="Prefer not to say">Prefer not to say</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
 
-                {formData.gender === "Other" && (
+                {formData.gender === 'Other' && (
                   <div>
                     <label
                       htmlFor="genderOther"
@@ -580,7 +640,6 @@ export default function Registration() {
               </h2>
 
               <div className="space-y-4">
-
                 {/* School */}
                 <div>
                   <label
@@ -602,20 +661,14 @@ export default function Registration() {
                     <option value="Florida International University">
                       Florida International University
                     </option>
-                    <option value="University of Miami">
-                      University of Miami
-                    </option>
-                    <option value="University of Florida">
-                      University of Florida
-                    </option>
-                    <option value="Florida State University">
-                      Florida State University
-                    </option>
+                    <option value="University of Miami">University of Miami</option>
+                    <option value="University of Florida">University of Florida</option>
+                    <option value="Florida State University">Florida State University</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
 
-                {formData.school === "Other" && (
+                {formData.school === 'Other' && (
                   <div>
                     <label
                       htmlFor="schoolOther"
@@ -655,9 +708,7 @@ export default function Registration() {
                   >
                     <option value="">Select level</option>
                     <option value="High School">High School</option>
-                    <option value="Undergraduate">
-                      Undergraduate
-                    </option>
+                    <option value="Undergraduate">Undergraduate</option>
                     <option value="Graduate">Graduate</option>
                     <option value="Doctoral">Doctoral</option>
                     <option value="Other">Other</option>
@@ -685,9 +736,7 @@ export default function Registration() {
                     <option value="2nd Year">2nd Year</option>
                     <option value="3rd Year">3rd Year</option>
                     <option value="4th Year">4th Year</option>
-                    <option value="5th Year or More">
-                      5th Year or More
-                    </option>
+                    <option value="5th Year or More">5th Year or More</option>
                     <option value="N/A">N/A</option>
                   </select>
                 </div>
@@ -710,12 +759,8 @@ export default function Registration() {
                     className="form-input"
                   >
                     <option value="">Select field</option>
-                    <option value="Computer Science">
-                      Computer Science
-                    </option>
-                    <option value="Information Technology">
-                      Information Technology
-                    </option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
                     <option value="Engineering">Engineering</option>
                     <option value="Mathematics">Mathematics</option>
                     <option value="Data Science">Data Science</option>
@@ -724,7 +769,7 @@ export default function Registration() {
                   </select>
                 </div>
 
-                {formData.fieldOfStudy === "Other" && (
+                {formData.fieldOfStudy === 'Other' && (
                   <div>
                     <label
                       htmlFor="fieldOther"
@@ -754,7 +799,6 @@ export default function Registration() {
               </h2>
 
               <div className="space-y-4">
-
                 {/* Shirt Size */}
                 <div>
                   <label
@@ -816,7 +860,6 @@ export default function Registration() {
             </h2>
 
             <div className="space-y-4">
-
               <label className="flex cursor-pointer items-start gap-3">
                 <input
                   type="checkbox"
@@ -828,11 +871,8 @@ export default function Registration() {
                 />
 
                 <span className="text-sm leading-relaxed text-witcon-brown">
-                  I have read and agreed to the{" "}
-                  <span className="font-semibold underline">
-                    WiTCON Code of Conduct
-                  </span>
-                  . *
+                  I have read and agreed to the{' '}
+                  <span className="font-semibold underline">WiTCON Code of Conduct</span>. *
                 </span>
               </label>
 
@@ -846,54 +886,33 @@ export default function Registration() {
                 />
 
                 <span className="text-sm leading-relaxed text-witcon-brown">
-                  I consent to being photographed and/or recorded during the
-                  event for promotional purposes.
+                  I consent to being photographed and/or recorded during the event for promotional
+                  purposes.
                 </span>
               </label>
             </div>
           </div>
 
+          {error && (
+            <p
+              role="alert"
+              className="mx-auto max-w-2xl rounded-xl border border-witcon-terracotta bg-white p-3 text-center text-sm text-witcon-terracotta"
+            >
+              {error}
+            </p>
+          )}
+
           <div className="flex justify-center pt-3">
             <button
               type="submit"
-              className="rounded-full bg-witcon-forest px-10 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2"
+              disabled={submitting}
+              className="rounded-full bg-witcon-forest px-10 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Submit Registration →
+              {submitting ? 'Submitting…' : 'Submit Registration →'}
             </button>
           </div>
         </form>
       </div>
-
-      {/* =========================================
-          FORM INPUT STYLING
-      ========================================= */}
-      <style>{`
-        .form-input {
-          width: 100%;
-          border-radius: 0.75rem;
-          border: 1px solid rgba(110, 65, 39, 0.18);
-          background: rgba(255, 255, 255, 0.82);
-          padding: 0.6rem 0.8rem;
-          font-family: var(--font-body);
-          font-size: 0.875rem;
-          color: var(--color-witcon-brown);
-          outline: none;
-          transition: all 150ms ease;
-        }
-
-        .form-input::placeholder {
-          color: rgba(110, 65, 39, 0.45);
-        }
-
-        .form-input:focus {
-          border-color: var(--color-witcon-pink);
-          box-shadow: 0 0 0 2px rgba(250, 162, 195, 0.35);
-        }
-
-        select.form-input {
-          cursor: pointer;
-        }
-      `}</style>
     </section>
   );
 }

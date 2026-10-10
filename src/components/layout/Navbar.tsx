@@ -1,15 +1,33 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { signOut } from '../../data/auth';
 
-const navLinks = [
+const publicLinks = [
   { label: 'Home', path: '/' },
   { label: 'Our Story', path: '/our-story' },
   { label: 'Registration', path: '/registration' },
-  { label: 'Profile', path: '/profile' },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { session, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const navLinks = session
+    ? [...publicLinks, { label: 'Profile', path: '/profile' }]
+    : publicLinks;
+
+  async function handleLogout() {
+    setIsOpen(false);
+    await signOut();
+    navigate('/');
+  }
+
+  const linkClass =
+    'text-sm font-semibold text-witcon-deep-forest transition-colors hover:text-witcon-pink';
+  const mobileLinkClass =
+    'rounded-xl px-4 py-3 text-left font-semibold text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30';
 
   return (
     <header className="sticky top-0 z-50 border-b border-witcon-deep-forest/10 bg-witcon-cream/95 backdrop-blur-md">
@@ -29,14 +47,21 @@ export default function Navbar() {
         {/* Desktop navigation */}
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className="text-sm font-semibold text-witcon-deep-forest transition-colors hover:text-witcon-pink"
-            >
+            <Link key={link.path} to={link.path} className={linkClass}>
               {link.label}
             </Link>
           ))}
+
+          {!loading &&
+            (session ? (
+              <button type="button" onClick={handleLogout} className={linkClass}>
+                Log out
+              </button>
+            ) : (
+              <Link to="/login" className={linkClass}>
+                Log in
+              </Link>
+            ))}
         </div>
 
         {/* Mobile menu button */}
@@ -48,7 +73,9 @@ export default function Navbar() {
           aria-controls="mobile-navigation"
           aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
         >
-          <span className="text-2xl">{isOpen ? '×' : '☰'}</span>
+          <span className="text-2xl" aria-hidden="true">
+            {isOpen ? '×' : '☰'}
+          </span>
         </button>
       </nav>
 
@@ -63,12 +90,31 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className="rounded-xl px-4 py-3 font-semibold text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30"
+                className={mobileLinkClass}
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
+
+            {!loading &&
+              (session ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className={mobileLinkClass}
+                >
+                  Log out
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className={mobileLinkClass}
+                  onClick={() => setIsOpen(false)}
+                >
+                  Log in
+                </Link>
+              ))}
           </div>
         </div>
       )}
