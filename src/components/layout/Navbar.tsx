@@ -1,21 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { signOut } from '../../data/auth';
+import { hasRegistration } from '../../data/registration';
 
 const publicLinks = [
   { label: 'Home', path: '/' },
   { label: 'Our Story', path: '/our-story' },
-  { label: 'Registration', path: '/registration' },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
   const { session, loading } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!session?.user?.id) {
+      setHasProfile(false);
+      return;
+    }
+
+    let active = true;
+
+    void hasRegistration(session.user.id)
+      .then((exists) => {
+        if (active) setHasProfile(exists);
+      })
+      .catch(() => {
+        if (active) setHasProfile(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [session?.user?.id]);
+
   const navLinks = session
-    ? [...publicLinks, { label: 'Profile', path: '/profile' }]
+    ? [
+        ...publicLinks,
+        ...(hasProfile ? [] : [{ label: 'Registration', path: '/registration' }]),
+        { label: 'Profile', path: '/profile' },
+      ]
     : publicLinks;
 
   async function handleLogout() {
