@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Registration from './pages/Registration';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Login from './pages/Login';
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +22,7 @@ function App() {
             <Route path="/registration" element={<Registration />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </main>
 
