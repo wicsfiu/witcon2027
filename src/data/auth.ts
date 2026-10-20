@@ -44,10 +44,21 @@ export async function signInWithGoogle() {
   if (error) throw new Error('Google sign-in could not be started. Please try again.');
 }
 
+function getPasswordResetRedirectUrl() {
+  const isLocalhost = window.location.hostname === 'localhost';
+
+  if (isLocalhost) {
+    return `${window.location.origin}/reset-password`;
+  }
+
+  return `${window.location.origin}/reset-password`;
+}
+
 export async function requestPasswordReset(email: string) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: getPasswordResetRedirectUrl(),
   });
+
   if (error) throw error;
 }
 
