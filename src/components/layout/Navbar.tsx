@@ -12,16 +12,19 @@ const publicLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
   const { session, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!session?.user?.id) {
-      setHasProfile(false);
-      return;
-    }
-
     let active = true;
+
+    if (!session?.user.id) {
+      setHasProfile(false);
+      return () => {
+        active = false;
+      };
+    }
 
     void hasRegistration(session.user.id)
       .then((exists) => {
@@ -34,26 +37,40 @@ export default function Navbar() {
     return () => {
       active = false;
     };
-  }, [session?.user?.id]);
+  }, [session?.user.id]);
 
   const navLinks = session
     ? [
         ...publicLinks,
-        ...(hasProfile ? [] : [{ label: 'Registration', path: '/registration' }]),
-        { label: 'Profile', path: '/profile' },
+        ...(hasProfile
+          ? [{ label: 'Profile', path: '/profile' }]
+          : [{ label: 'Registration', path: '/registration' }]),
       ]
     : publicLinks;
 
-  async function handleLogout() {
+  const linkClass =
+    'inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest';
+
+  const mobileLinkClass =
+    'flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest';
+
+  function closeMenu() {
     setIsOpen(false);
-    await signOut();
-    navigate('/');
+    setLogoutError('');
   }
 
-  const linkClass =
-    'text-sm font-semibold text-witcon-deep-forest transition-colors hover:text-witcon-pink';
-  const mobileLinkClass =
-    'rounded-xl px-4 py-3 text-left font-semibold text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30';
+  async function handleLogout() {
+    setLogoutError('');
+
+    try {
+      await signOut();
+      closeMenu();
+      setHasProfile(false);
+      navigate('/', { replace: true });
+    } catch {
+      setLogoutError('Could not log out. Please try again.');
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-witcon-deep-forest/10 bg-witcon-cream/95 backdrop-blur-md">
@@ -61,17 +78,17 @@ export default function Navbar() {
         className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
         aria-label="Main navigation"
       >
-        {/* Logo */}
         <Link
           to="/"
-          className="font-display text-xl font-bold text-witcon-deep-forest sm:text-2xl"
-          onClick={() => setIsOpen(false)}
+          onClick={closeMenu}
+          className="rounded-md font-display text-xl font-bold text-witcon-deep-forest transition-colors hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-2xl"
         >
           WiTCON
+          <span className="sr-only"> Home</span>
         </Link>
 
         {/* Desktop navigation */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {navLinks.map((link) => (
             <Link key={link.path} to={link.path} className={linkClass}>
               {link.label}
@@ -80,7 +97,11 @@ export default function Navbar() {
 
           {!loading &&
             (session ? (
-              <button type="button" onClick={handleLogout} className={linkClass}>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className={linkClass}
+              >
                 Log out
               </button>
             ) : (
@@ -90,16 +111,16 @@ export default function Navbar() {
             ))}
         </div>
 
-        {/* Mobile menu button */}
+        {/* Mobile menu toggle */}
         <button
           type="button"
-          className="rounded-lg p-2 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest md:hidden"
           onClick={() => setIsOpen((current) => !current)}
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
           aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
         >
-          <span className="text-2xl" aria-hidden="true">
+          <span className="text-2xl leading-none" aria-hidden="true">
             {isOpen ? '×' : '☰'}
           </span>
         </button>
@@ -111,13 +132,13 @@ export default function Navbar() {
           id="mobile-navigation"
           className="border-t border-witcon-deep-forest/10 bg-witcon-cream px-4 py-4 md:hidden"
         >
-          <div className="flex flex-col gap-2">
+          <div className="mx-auto flex max-w-7xl flex-col gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={mobileLinkClass}
-                onClick={() => setIsOpen(false)}
+                onClick={closeMenu}
               >
                 {link.label}
               </Link>
@@ -136,13 +157,28 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   className={mobileLinkClass}
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeMenu}
                 >
                   Log in
                 </Link>
               ))}
+
+            {logoutError && (
+              <p role="alert" className="px-4 py-2 text-sm text-witcon-terracotta">
+                {logoutError}
+              </p>
+            )}
           </div>
         </div>
+      )}
+
+      {logoutError && !isOpen && (
+        <p
+          role="alert"
+          className="border-t border-witcon-deep-forest/10 px-4 py-2 text-center text-sm text-witcon-terracotta"
+        >
+          {logoutError}
+        </p>
       )}
     </header>
   );

@@ -1,20 +1,24 @@
+
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Footer from './components/layout/Footer';
 import Navbar from './components/layout/Navbar';
+import RequireAuth from './components/RequireAuth';
+import { AuthProvider } from './context/AuthContext';
 
-import OurStory from './pages/OurStory';
 import Home from './pages/Home';
+import OurStory from './pages/OurStory';
 import Registration from './pages/Registration';
+import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import Login from './pages/Login';
+import Profile from './pages/Profile';
+import AuthCallback from './pages/AuthCallback';
 
-import { AuthProvider } from './context/AuthContext';
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <div className="flex min-h-screen flex-col">
           <Navbar />
 
@@ -23,16 +27,26 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/our-story" element={<OurStory />} />
               <Route path="/registration" element={<Registration />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+
+              <Route
+                path="/profile"
+                element={
+                  <RequireAuth>
+                    <Profile />
+                  </RequireAuth>
+                }
+              />
             </Routes>
           </main>
 
           <Footer />
         </div>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
