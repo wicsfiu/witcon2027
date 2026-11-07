@@ -10,8 +10,12 @@ import {
   uploadResume,
 } from '../data/registration.ts';
 
+// Same rules as the check constraints on the registrations table
+const LINKEDIN_PATTERN = /^https:\/\/([a-z]+\.)?linkedin\.com\//i;
+const GITHUB_PATTERN = /^https:\/\/(www\.)?github\.com\//i;
+
 export default function Registration() {
-  const { session } = useAuth();
+  const { session, loading } = useAuth();
   const navigate = useNavigate();
   const didSubmit = useRef(false);
 
@@ -19,6 +23,7 @@ export default function Registration() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -104,17 +109,41 @@ export default function Registration() {
     setResume(file);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  // Step 1: create the account. The registration form only appears once
+  // the student has a session (after confirming their email, if required).
+  const handleAccountSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
-    if (!session && formData.email !== formData.confirmEmail) {
+    if (formData.email.trim() !== formData.confirmEmail.trim()) {
       setError('Email addresses do not match.');
       return;
     }
 
-    if (!session && formData.password.length < 10) {
+    if (formData.password.length < 10) {
       setError('Password must be at least 10 characters.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const { needsConfirmation } = await signUp(formData.email.trim(), formData.password);
+      if (needsConfirmation) setAwaitingConfirmation(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Step 2: save the registration and upload the resume
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+
+    if (!session || !session.user.email) {
+      setError('Your session has expired. Please log in again.');
       return;
     }
 
@@ -123,9 +152,15 @@ export default function Registration() {
       return;
     }
 
-    const email = session?.user.email ?? formData.email.trim();
-    if (!email) {
-      setError('Please provide an email address for your registration.');
+    const linkedin = formData.linkedin.trim();
+    if (linkedin && !LINKEDIN_PATTERN.test(linkedin)) {
+      setError('LinkedIn link must start with https://linkedin.com/ or https://www.linkedin.com/');
+      return;
+    }
+
+    const github = formData.github.trim();
+    if (github && !GITHUB_PATTERN.test(github)) {
+      setError('GitHub link must start with https://github.com/');
       return;
     }
 
@@ -138,15 +173,15 @@ export default function Registration() {
     setSubmitting(true);
 
     try {
-      // 1. Account (skipped if already logged in, e.g. retrying after a failure)
-      const userId = session?.user.id ?? (await signUp(formData.email.trim(), formData.password));
-      // 2. Registration row (skipped if a previous attempt already created it)
+      const userId = session.user.id;
+
+      // 1. Registration row (skipped if a previous attempt already created it)
       const existingRegistration = await getRegistration(userId);
       if (!existingRegistration) {
-        await createRegistration(userId, email, formData);
+        await createRegistration(userId, session.user.email, formData);
       }
 
-      // 3. Resume
+      // 2. Resume
       await uploadResume(userId, resume);
 
       setSubmitted(true);
@@ -156,6 +191,153 @@ export default function Registration() {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <p role="status" className="p-8 text-center text-witcon-brown">
+        Loading…
+      </p>
+    );
+  }
+
+  // Account created, waiting for the student to click the emailed link
+  if (!session && awaitingConfirmation) {
+    return (
+      <section className="flex min-h-[70vh] items-center justify-center px-4 py-16">
+        <div className="w-full max-w-2xl rounded-3xl border border-witcon-sage bg-white p-10 text-center shadow-sm">
+          <div className="mb-4 text-5xl">📧</div>
+
+          <h1 className="font-display text-4xl font-bold text-witcon-deep-forest">
+            Check your email
+          </h1>
+
+          <p className="mt-4 text-witcon-brown">
+            We sent a confirmation link to{' '}
+            <span className="font-semibold">{formData.email.trim()}</span>. Click it to come back
+            and finish your registration.
+          </p>
+
+          <p className="mt-4 text-sm text-witcon-brown">
+            Already confirmed?{' '}
+            <Link to="/login" className="font-semibold underline">
+              Log in
+            </Link>
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // Step 1 of 2: no session yet, so create the account first
+  if (!session) {
+    return (
+      <section className="px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-xl">
+          <div className="mb-10 text-center">
+            <h1 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
+              Welcome to WiTCON 2027!
+            </h1>
+
+            <p className="mt-2 font-display text-xl font-semibold text-witcon-burgundy sm:text-2xl">
+              Step 1 of 2: Create your account
+            </p>
+
+            <p className="mt-3 text-sm text-witcon-brown">
+              Already have an account?{' '}
+              <Link to="/login" className="font-semibold underline">
+                Log in
+              </Link>
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleAccountSubmit}
+            className="space-y-4 rounded-2xl border border-witcon-sage bg-witcon-sage/30 p-5 shadow-sm"
+          >
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+              >
+                Email *
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmEmail"
+                className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+              >
+                Confirm Email *
+              </label>
+
+              <input
+                id="confirmEmail"
+                name="confirmEmail"
+                type="email"
+                autoComplete="email"
+                required
+                value={formData.confirmEmail}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+              >
+                Password * (10+ characters)
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={10}
+                value={formData.password}
+                onChange={handleChange}
+                className="form-input"
+              />
+            </div>
+
+            {error && (
+              <p
+                role="alert"
+                className="rounded-xl border border-witcon-terracotta bg-white p-3 text-center text-sm text-witcon-terracotta"
+              >
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-center pt-2">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="rounded-full bg-witcon-forest px-10 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submitting ? 'Creating account…' : 'Create Account →'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    );
+  }
 
   if (submitted) {
     return (
@@ -189,17 +371,8 @@ export default function Registration() {
           </h1>
 
           <p className="mt-2 font-display text-xl font-semibold text-witcon-burgundy sm:text-2xl">
-            Please register here!
+            Step 2 of 2: Please register here!
           </p>
-
-          {!session && (
-            <p className="mt-3 text-sm text-witcon-brown">
-              Already have an account?{' '}
-              <Link to="/login" className="font-semibold underline">
-                Log in
-              </Link>
-            </p>
-          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -271,58 +444,11 @@ export default function Registration() {
                     type="email"
                     autoComplete="email"
                     required
-                    readOnly={!!session?.user.email}
-                    value={session?.user.email ?? formData.email}
-                    onChange={handleChange}
+                    readOnly
+                    value={session.user.email ?? ''}
                     className="form-input"
                   />
                 </div>
-
-                {/* Confirm Email + Password (only when creating an account) */}
-                {!session && (
-                  <>
-                    <div>
-                      <label
-                        htmlFor="confirmEmail"
-                        className="mb-1.5 block text-sm font-semibold text-witcon-brown"
-                      >
-                        Confirm Email *
-                      </label>
-
-                      <input
-                        id="confirmEmail"
-                        name="confirmEmail"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={formData.confirmEmail}
-                        onChange={handleChange}
-                        className="form-input"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="password"
-                        className="mb-1.5 block text-sm font-semibold text-witcon-brown"
-                      >
-                        Password * (10+ characters)
-                      </label>
-
-                      <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        minLength={10}
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="form-input"
-                      />
-                    </div>
-                  </>
-                )}
 
                 {/* Date of Birth */}
                 <div>

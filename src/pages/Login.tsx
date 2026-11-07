@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signIn, signInWithGoogle } from '../data/auth';
 import { hasRegistration } from '../data/registration';
 import { supabase } from '../lib/supabaseClient';
+import Header from '../components/text/Header';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -45,8 +46,9 @@ export default function Login() {
   }
 
   return (
+    
     <section className="flex min-h-[70vh] items-center justify-center px-4 py-12 sm:px-6">
-      <div className="w-full max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
+      <div className="max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
         <h1 className="font-display text-4xl font-bold text-witcon-deep-forest">Log in</h1>
 
         <p className="mt-2 text-sm text-witcon-brown">Welcome back to WiTCON 2027.</p>
@@ -120,10 +122,27 @@ export default function Login() {
             Forgot password?
           </Link>
           {' · '}
-          <Link to="/registration" className="underline">
-            Register
-          </Link>
         </p>
+      </div>
+      <div className = "max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
+        <Header className="mb-4">Register</Header>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-witcon-brown">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+            />
+            
+          </div>
+        </form>
       </div>
     </section>
   );
