@@ -106,7 +106,7 @@ export default function Navbar() {
               </button>
             ) : (
               <Link to="/login" className={linkClass}>
-                Log in
+                Register
               </Link>
             ))}
         </div>
