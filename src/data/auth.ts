@@ -14,18 +14,25 @@ function authError(message: string) {
   return new Error('Authentication failed. Please try again.');
 }
 
-export async function signUp(email: string, password: string): Promise<string> {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signUp(
+  email: string,
+  password: string,
+): Promise<{ needsConfirmation: boolean }> {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      // The confirmation email sends the student back to the registration form.
+      emailRedirectTo: `${window.location.origin}/registration`,
+    },
+  });
 
   if (error) {
     throw authError(error.message);
   }
 
-  if (!data.session || !data.user) {
-    throw new Error('Account created. Please confirm your email, then log in to continue.');
-  }
-
-  return data.user.id;
+  // With "Confirm email" on, there is no session until the link is clicked.
+  return { needsConfirmation: !data.session };
 }
 
 export async function signIn(email: string, password: string) {
