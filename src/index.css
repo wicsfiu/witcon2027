@@ -1,38 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Emilys+Candy&display=swap');
 @import 'tailwindcss';
 @tailwind utilities;
+
+
+
 
 /* Please consider this file like you would a globals.css file, these are CSS styling settings that apply to the entirety of the page */
 
 @theme {
-  --color-witcon-forest: #6c8123;
-  --color-witcon-deep-forest: #546a30;
-  --color-witcon-sage: #bede87;
+  --color-dark-green: #546a30;
+  --color-deep-green: #6d8024;
+  --color-soft-green: #bddd86;
+  --color-teal: #2ee4b3;
 
-  --color-witcon-brown: #6e4127;
-  --color-witcon-terracotta: #b36436;
+  --color-brown: #6e4127;
+  --color-light-brown: #b36537;
 
-  --color-witcon-pink: #db6591;
-  --color-witcon-soft-pink: #faa2c3;
+  --color-pink: #db6691;
+  --color-medium-pink: #faa2c3;
+  --color-hot-pink: #d91960;
+  --color-peach: #ffc5a3;
 
-  --color-witcon-lavender: #9c83c6;
-  --color-witcon-soft-lavender: #c3acea;
+  --color-purple: #7b57bb;
+  --color-soft-lavender: #c2abe9;
 
-  --color-witcon-blue: #5a94e6;
-  --color-witcon-soft-blue: #99c3ff;
+  --color-blue: #5b94e6;
+  --color-soft-blue: #99c3ff;
 
-  --color-witcon-yellow: #ffe09e;
-  --color-witcon-peach: #ffc5a3;
+  --color-yellow: #ffc345;
+  --color-light-yellow: #ffe09e;
 
-  --color-witcon-burgundy: #81193f;
+  --color-burgundy: #811a40;
 
-  --color-witcon-cream: #fff6e3;
+  --color-cream: #fff6e3;
 
   /* ========================================
      WiTCON 2027 — Typography
      ======================================== */
 
-  --font-display: 'Fraunces', serif;
-  --font-body: 'Manrope', sans-serif;
+  --font-the-seasons: 'The Seasons', serif;
+  --font-emilys-candy: 'Emilys Candy', serif;
+  --font-arima: 'Arima', sans-serif;
 }
 
 /* ========================================
@@ -47,9 +56,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--color-witcon-cream);
-  color: var(--color-witcon-deep-forest);
-  font-family: var(--font-body);
+  background: var(--color-cream);
 }
 
 * {
