@@ -4,7 +4,7 @@ interface ButtonProps {
   children: ReactNode;
   href?: string;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'nav';
   type?: 'button' | 'submit';
 }
 
@@ -21,8 +21,12 @@ export default function Button({
   const variants = {
     primary:
       'bg-witcon-forest text-white hover:-translate-y-0.5 hover:bg-witcon-deep-forest focus-visible:outline-witcon-pink',
+
     secondary:
       'border-2 border-witcon-deep-forest text-witcon-deep-forest hover:bg-witcon-deep-forest hover:text-witcon-cream focus-visible:outline-witcon-pink',
+
+    nav:
+      'px-4 py-2 font-semibold text-witcon-deep-forest hover:bg-witcon-sage/30 hover:text-witcon-pink focus-visible:ring-2 focus-visible:ring-witcon-forest',
   };
 
   const className = `${baseStyles} ${variants[variant]}`;
