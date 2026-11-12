@@ -1,169 +1,82 @@
+import akamaiLogo from "../../assets/logos/akamai.svg";
+import googleLogo from "../../assets/logos/google.svg";
+import microsoftLogo from "../../assets/logos/microsoft.svg";
+import ukgLogo from "../../assets/logos/ukg.svg";
+import fordLogo from "../../assets/logos/ford.svg";
+
+// Replace these with your actual pond background asset paths when ready
+// import pondAssetMobile from "../../assets/stickers/pond-mobile.svg";
+// import pondAssetDesktop from "../../assets/stickers/pond-desktop.svg";
+
 interface Sponsor {
+  id: number;
   name: string;
-  image?: string;
-  link?: string;
+  logo: string;
 }
-
-interface CommunityPartner {
-  name: string;
-  image?: string;
-  link?: string;
-}
-
-const sponsors: Sponsor[] = [
-  // Add sponsors here as they are confirmed.
-  // Example:
-  // {
-  //   name: "Company Name",
-  //   image: "/images/sponsors/company-name.png",
-  //   link: "https://company.com",
-  // },
-];
-
-const communityPartners: CommunityPartner[] = [
-  // Add community partners here as they are confirmed.
-  // Example:
-  // {
-  //   name: "KFSCIS",
-  //   image: "/images/partners/KFSCIS_Logo.png",
-  //   link: "https://www.cis.fiu.edu/",
-  // },
-];
 
 export default function Sponsors() {
+  const sponsors: Sponsor[] = [
+    { id: 1, name: "Akamai", logo: akamaiLogo },
+    { id: 2, name: "Google", logo: googleLogo },
+    { id: 3, name: "Microsoft", logo: microsoftLogo },
+    { id: 4, name: "UKG", logo: ukgLogo },
+    { id: 5, name: "Akamai", logo: akamaiLogo },
+    { id: 6, name: "Ford", logo: fordLogo },
+    { id: 7, name: "Microsoft", logo: microsoftLogo },
+    { id: 8, name: "UKG", logo: ukgLogo },
+    { id: 9, name: "Ford", logo: fordLogo },
+    { id: 10, name: "Google", logo: googleLogo },
+  ];
+
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-      {/* Sponsors */}
-      <div>
-        <div className="text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-witcon-pink">
-            Our supporters
-          </p>
+    <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16 md:px-16 md:py-24">
+      
+      {/* Section Title */}
+      <h2 className="mb-8 text-center font-emilys-candy text-4xl tracking-wide text-[color:var(--color-hot-pink)] md:mb-12 md:text-5xl">
+        Past Sponsors
+      </h2>
 
-          <h2 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
-            Sponsors
-          </h2>
+      {/* Pond Container */}
+      <div className="relative flex w-full max-w-5xl flex-col items-center justify-center p-6 sm:p-10 md:p-14">
+        
+        {/* Placeholder / Background Pond Asset Layer */}
+        {/* Uncomment once your SVG is ready:
+        <img 
+          src={pondAssetMobile} 
+          alt="" 
+          className="block md:hidden absolute inset-0 w-full h-full object-contain pointer-events-none select-none" 
+        />
+        <img 
+          src={pondAssetDesktop} 
+          alt="" 
+          className="hidden md:block absolute inset-0 w-full h-full object-contain pointer-events-none select-none" 
+        />
+        */}
 
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-witcon-deep-forest/70 sm:text-lg">
-            We are grateful to the organizations that support WiTCON and
-            help us create meaningful opportunities for students and the
-            technology community.
-          </p>
+        {/* Lily Pads (2x5 on Mobile, 5x2 on Desktop) */}
+        <div className="relative z-10 grid w-full max-w-2xl grid-cols-2 gap-x-8 gap-y-10 md:max-w-5xl md:grid-cols-5 md:gap-x-6 md:gap-y-14">
+          {sponsors.map((sponsor, index) => (
+            <div
+              key={sponsor.id}
+              className={`flex flex-col items-center justify-center text-center ${
+                index % 2 === 1
+                  ? "translate-y-4 md:translate-y-6"
+                  : "-translate-y-2 md:translate-y-0"
+              }`}
+            >
+              {/* Lily Pad Circle / Sponsor Node */}
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white p-4 shadow-md transition hover:scale-105 sm:h-28 sm:w-28 md:h-28 md:w-28 lg:h-32 lg:w-32">
+                <img
+                  src={sponsor.logo}
+                  alt={sponsor.name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+            </div>
+          ))}
         </div>
 
-        {sponsors.length > 0 ? (
-          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {sponsors.map((sponsor) => (
-              <SponsorTile key={sponsor.name} sponsor={sponsor} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-10 rounded-3xl border border-dashed border-witcon-deep-forest/20 bg-witcon-sage/10 px-6 py-12 text-center">
-            <p className="font-display text-xl font-semibold text-witcon-deep-forest/70">
-              Sponsor logos coming soon
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Community Partners */}
-      <div className="mt-20">
-        <div className="text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-witcon-pink">
-            Growing together
-          </p>
-
-          <h2 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
-            Community Partners
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-witcon-deep-forest/70 sm:text-lg">
-            WiTCON is made possible through the support of organizations
-            and communities that believe in creating a more inclusive
-            future in technology.
-          </p>
-        </div>
-
-        {communityPartners.length > 0 ? (
-          <div className="mt-10 flex flex-wrap justify-center gap-5">
-            {communityPartners.map((partner) => (
-              <PartnerTile key={partner.name} partner={partner} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-10 rounded-3xl border border-dashed border-witcon-deep-forest/20 bg-witcon-sage/10 px-6 py-12 text-center">
-            <p className="font-display text-xl font-semibold text-witcon-deep-forest/70">
-              Community partners coming soon
-            </p>
-          </div>
-        )}
       </div>
     </section>
-  );
-}
-
-function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
-  const content = (
-    <div className="flex h-32 items-center justify-center rounded-2xl border border-witcon-deep-forest/10 bg-white p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-36">
-      {sponsor.image ? (
-        <img
-          src={sponsor.image}
-          alt={`${sponsor.name} logo`}
-          className="max-h-full max-w-full object-contain"
-        />
-      ) : (
-        <span className="text-center font-semibold text-witcon-deep-forest/60">
-          {sponsor.name}
-        </span>
-      )}
-    </div>
-  );
-
-  if (!sponsor.link) {
-    return content;
-  }
-
-  return (
-    <a
-      href={sponsor.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Visit ${sponsor.name}`}
-    >
-      {content}
-    </a>
-  );
-}
-
-function PartnerTile({ partner }: { partner: CommunityPartner }) {
-  const content = (
-    <div className="flex h-32 w-full max-w-sm items-center justify-center rounded-2xl border border-witcon-deep-forest/10 bg-white p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-36">
-      {partner.image ? (
-        <img
-          src={partner.image}
-          alt={`${partner.name} logo`}
-          className="max-h-full max-w-full object-contain"
-        />
-      ) : (
-        <span className="text-center font-semibold text-witcon-deep-forest/60">
-          {partner.name}
-        </span>
-      )}
-    </div>
-  );
-
-  if (!partner.link) {
-    return content;
-  }
-
-  return (
-    <a
-      href={partner.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Visit ${partner.name}`}
-    >
-      {content}
-    </a>
   );
 }

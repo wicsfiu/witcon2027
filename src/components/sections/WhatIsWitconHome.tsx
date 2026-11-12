@@ -1,47 +1,51 @@
 import { Link } from "react-router-dom";
+import frameImg from "../../assets/stickers/frame.svg";
 
 export default function WhatIsWitconHome() {
   return (
-    <section className="bg-witcon-cream px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 md:grid-cols-[0.8fr_1.2fr] md:gap-12 lg:gap-16">
+    <section className="mx-auto max-w-6xl px-6 py-16 md:px-16 md:py-24">
+      <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-16">
         
-        {/* Decorative frame */}
-        <div className="order-1 flex justify-center md:justify-start">
-          <div className="relative flex h-64 w-52 items-center justify-center sm:h-72 sm:w-60">
-            
-            {/* Image / visual */}
-        <div className="order-2">
-          <div className="relative overflow-hidden rounded-3xl border border-witcon-deep-forest/10 bg-witcon-sage/20 p-3 shadow-sm">
-            <div className="flex min-h-64 items-center justify-center rounded-2xl bg-witcon-sage/30 sm:min-h-80">
-              <p className="font-display text-2xl font-semibold text-witcon-deep-forest/60">
-                WiTCON
-              </p>
-            </div>
-          </div>
-        </div>
-          </div>
+        {/* Mobile Title */}
+        <h2 className="text-center font-emilys-candy text-3xl text-[color:var(--color-hot-pink)] md:hidden">
+          What is WiTCON?
+        </h2>
+
+        {/* Left Column on Desktop / Middle on Mobile: Frame Image */}
+        <div className="flex justify-center">
+          <img
+            src={frameImg}
+            alt="Decorative vintage frame"
+            className="w-64 sm:w-72 md:w-80 lg:w-96"
+          />
         </div>
 
-        {/* Text */}
-        <div className="order-2 text-center md:text-left">
-          <h2 className="font-display text-3xl font-semibold text-witcon-deep-forest sm:text-4xl">
+        {/* Right Column on Desktop / Bottom on Mobile: Text & CTA */}
+        <div className="flex flex-col items-center md:items-start">
+          {/* Desktop Title */}
+          <h2 className="hidden font-emilys-candy text-4xl text-[color:var(--color-hot-pink)] md:block lg:text-5xl">
             What is WiTCON?
           </h2>
 
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-witcon-deep-forest/75 sm:text-base md:mx-0">
-            WiTCON is the signature Women in Technology Conference at
-            Florida International University. Join us for a day of learning,
-            networking, and connecting with students and professionals in
-            technology.
+          {/* Body Copy */}
+          <p className="mt-2 max-w-xs text-left font-arima text-sm leading-relaxed tracking-wide text-[color:var(--color-dark-green)] md:mt-4 md:max-w-md md:text-base">
+            Women in Technology Conference (WiTCON) is FIU’s premier student-led
+            conference celebrating women and underrepresented groups in tech.
+            Join us for a full day of inspiring keynotes, hands-on workshops,
+            networking, and career opportunities.
           </p>
 
-          <Link
-            to="/about"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-witcon-pink px-8 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-witcon-pink focus:ring-offset-2"
-          >
-            Learn more
-          </Link>
+          {/* Learn More Button (Desktop Only) */}
+          <div className="mt-8 hidden self-center md:block">
+            <Link
+              className="inline-block rounded-full bg-[color:var(--color-pink)] px-12 py-2.5 font-arima text-sm tracking-wide text-white transition hover:bg-[color:var(--color-hot-pink)]"
+              to="/about"
+            >
+              Learn more
+            </Link>
+          </div>
         </div>
+
       </div>
     </section>
   );

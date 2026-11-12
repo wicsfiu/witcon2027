@@ -6,7 +6,7 @@ import { hasRegistration } from '../../data/registration';
 
 const publicLinks = [
   { label: 'Home', path: '/' },
-  { label: 'Our Story', path: '/our-story' },
+  // { label: 'Our Story', path: '/our-story' },
 ];
 
 export default function Navbar() {
