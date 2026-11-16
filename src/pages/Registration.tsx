@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signUp } from '../data/auth';
 import {
@@ -17,6 +17,7 @@ const GITHUB_PATTERN = /^https:\/\/(www\.)?github\.com\//i;
 export default function Registration() {
   const { session, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const didSubmit = useRef(false);
 
   const [resume, setResume] = useState<File | null>(null);
@@ -25,11 +26,13 @@ export default function Registration() {
   const [error, setError] = useState('');
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
+  const initialEmail = (location.state as { email?: string } | null)?.email ?? '';
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    email: '',
-    confirmEmail: '',
+    email: initialEmail,
+    confirmEmail: initialEmail,
     password: '',
     dateOfBirth: '',
 
@@ -59,6 +62,14 @@ export default function Registration() {
     codeOfConduct: false,
     photographyConsent: false,
   });
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      email: initialEmail,
+      confirmEmail: initialEmail,
+    }));
+  }, [initialEmail]);
 
   // Already registered? Send them to their profile.
   useEffect(() => {
@@ -259,9 +270,8 @@ export default function Registration() {
                 htmlFor="email"
                 className="mb-1.5 block text-sm font-semibold text-witcon-brown"
               >
-                Email *
+                Email
               </label>
-
               <input
                 id="email"
                 name="email"
@@ -279,9 +289,8 @@ export default function Registration() {
                 htmlFor="confirmEmail"
                 className="mb-1.5 block text-sm font-semibold text-witcon-brown"
               >
-                Confirm Email *
+                Confirm Email
               </label>
-
               <input
                 id="confirmEmail"
                 name="confirmEmail"
@@ -299,9 +308,8 @@ export default function Registration() {
                 htmlFor="password"
                 className="mb-1.5 block text-sm font-semibold text-witcon-brown"
               >
-                Password * (10+ characters)
+                Password
               </label>
-
               <input
                 id="password"
                 name="password"
@@ -316,23 +324,18 @@ export default function Registration() {
             </div>
 
             {error && (
-              <p
-                role="alert"
-                className="rounded-xl border border-witcon-terracotta bg-white p-3 text-center text-sm text-witcon-terracotta"
-              >
+              <p role="alert" className="text-sm text-witcon-terracotta">
                 {error}
               </p>
             )}
 
-            <div className="flex justify-center pt-2">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="rounded-full bg-witcon-forest px-10 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting ? 'Creating account…' : 'Create Account →'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full rounded-full bg-witcon-forest px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? 'Creating account…' : 'Create account'}
+            </button>
           </form>
         </div>
       </section>
@@ -364,18 +367,21 @@ export default function Registration() {
 
   return (
     <section className="px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-10 text-center">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-8 text-center">
           <h1 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
-            Welcome to WiTCON 2027!
+            Registration
           </h1>
-
-          <p className="mt-2 font-display text-xl font-semibold text-witcon-burgundy sm:text-2xl">
-            Step 2 of 2: Please register here!
-          </p>
+          <p className="mt-2 text-witcon-brown">Complete your WiTCON 2027 registration details.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="mb-6 rounded-xl border border-witcon-terracotta/40 bg-witcon-terracotta/5 p-3 text-sm text-witcon-terracotta">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* =========================================
               PERSONAL INFORMATION + PROFILE LINKS
           ========================================= */}
