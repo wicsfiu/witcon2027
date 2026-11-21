@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getRegistration } from '../data/registration';
+import witcon2027Background from '../assets/witcon2027_background.webp';
+import butterflySideSticker from '../assets/stickers/butterflyside.svg';
+import cellphoneSticker from '../assets/stickers/cellphone.svg';
 
 interface ProfileData {
   firstName: string;
@@ -55,14 +58,24 @@ export default function Profile() {
 
   if (error) {
     return (
-      <section className="flex min-h-[70vh] items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md rounded-3xl border border-witcon-sage bg-white p-8 text-center shadow-sm">
-          <p role="alert" className="text-witcon-terracotta">
+      <section
+        className="relative flex min-h-screen items-center justify-center bg-cream bg-cover bg-center px-4 py-14 sm:px-6"
+        style={{ backgroundImage: `url(${witcon2027Background})` }}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-cream/35" aria-hidden="true" />
+        <div className="relative z-10 w-full max-w-sm rounded-3xl border border-peach bg-cream/95 p-6 text-center shadow-md backdrop-blur-xs">
+          <img
+            src={butterflySideSticker}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-10 right-4 w-20 sm:w-24 rotate-6 drop-shadow-sm select-none"
+          />
+          <p role="alert" className="font-arima text-xs font-medium text-burgundy">
             {error}
           </p>
           <Link
             to="/registration"
-            className="mt-4 inline-block font-semibold text-witcon-forest underline"
+            className="mt-4 inline-block rounded-full bg-pink px-5 py-2 font-arima text-xs font-semibold tracking-wide text-white shadow-sm transition hover:bg-hot-pink"
           >
             Return to registration
           </Link>
@@ -73,78 +86,129 @@ export default function Profile() {
 
   if (!profile) {
     return (
-      <p role="status" className="p-8 text-center text-witcon-brown">
-        Loading profile…
-      </p>
+      <section
+        className="relative flex min-h-screen items-center justify-center bg-cream bg-cover bg-center px-4"
+        style={{ backgroundImage: `url(${witcon2027Background})` }}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-cream/35" aria-hidden="true" />
+        <p
+          role="status"
+          className="relative z-10 rounded-full border border-peach bg-cream/95 px-6 py-2.5 font-arima text-xs font-semibold text-brown shadow-sm"
+        >
+          Loading profile…
+        </p>
+      </section>
     );
   }
 
   return (
-    <main className="min-h-screen bg-witcon-cream">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-        <section className="rounded-3xl border border-witcon-deep-forest/10 bg-white p-6 shadow-sm sm:p-8">
-          <div className="flex flex-col items-center gap-5 sm:flex-row">
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-4 border-witcon-pink bg-witcon-sage/30">
-              <span className="font-display text-3xl font-bold text-witcon-deep-forest">
-                {profile.firstName.charAt(0)}
-                {profile.lastName.charAt(0)}
-              </span>
-            </div>
-            <div className="text-center sm:text-left">
-              <h1 className="font-display text-3xl font-bold text-witcon-deep-forest">
-                {profile.firstName} {profile.lastName}
-              </h1>
-              <p className="mt-1 text-sm text-witcon-deep-forest/65">{profile.email}</p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
-                <span className="rounded-full bg-witcon-sage/30 px-3 py-1 text-xs font-semibold text-witcon-deep-forest">
-                  {profile.fieldOfStudy}
-                </span>
-                <span className="rounded-full bg-witcon-pink/10 px-3 py-1 text-xs font-semibold text-witcon-pink">
-                  {profile.levelOfStudy}
+    <main
+      className="relative min-h-screen bg-cream bg-cover bg-fixed bg-center px-4 py-12 sm:px-6 lg:px-8"
+      style={{ backgroundImage: `url(${witcon2027Background})` }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-cream/35" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto max-w-4xl space-y-5">
+        {/* Top Row: Attendee Identity + Resume Status */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <section className="relative rounded-3xl border border-peach bg-cream/95 p-5 shadow-md backdrop-blur-xs md:col-span-2 sm:p-6">
+            <img
+              src={butterflySideSticker}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-9 right-4 w-20 sm:w-24 rotate-6 drop-shadow-sm select-none"
+            />
+
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+              <div className="flex h-16 w-16 sm:h-18 sm:w-18 shrink-0 items-center justify-center rounded-full border-2 border-pink bg-peach/40">
+                <span className="font-the-seasons text-xl font-bold text-brown">
+                  {profile.firstName.charAt(0)}
+                  {profile.lastName.charAt(0)}
                 </span>
               </div>
-            </div>
-          </div>
-        </section>
 
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <InfoCard title="Academic Information">
-            <InfoRow label="Major" value={profile.fieldOfStudy} />
-            <InfoRow label="School" value={profile.school} />
-            <InfoRow label="Level of Study" value={profile.levelOfStudy} />
-            <InfoRow label="Year" value={profile.yearLevel} />
-          </InfoCard>
-          <InfoCard title="Contact & Social">
-            <InfoRow label="Email" value={profile.email} />
-            <InfoRow label="LinkedIn" value={profile.linkedin} isLink />
-            <InfoRow label="GitHub" value={profile.github} isLink />
-            <InfoRow label="Discord" value={profile.discord} />
-          </InfoCard>
-          <InfoCard title="Resume">
-            <p className="rounded-2xl bg-witcon-cream p-4 text-sm text-witcon-deep-forest">
+              <div className="text-center sm:text-left">
+                <h1 className="font-the-seasons text-xl sm:text-2xl font-bold tracking-tight text-brown">
+                  {profile.firstName} {profile.lastName}
+                </h1>
+                <p className="mt-0.5 font-arima text-xs text-light-brown">{profile.email}</p>
+
+                <div className="mt-2.5 flex flex-wrap justify-center gap-2 sm:justify-start">
+                  <span className="rounded-full border border-soft-green bg-soft-green/25 px-3 py-0.5 font-arima text-[11px] font-semibold text-dark-green">
+                    {profile.fieldOfStudy}
+                  </span>
+                  <span className="rounded-full border border-medium-pink bg-pink/15 px-3 py-0.5 font-arima text-[11px] font-semibold text-hot-pink">
+                    {profile.levelOfStudy}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="flex flex-col justify-center rounded-3xl border border-medium-pink bg-cream/95 p-5 shadow-md backdrop-blur-xs sm:p-6">
+            <h2 className="font-the-seasons text-lg font-bold tracking-tight text-pink">
+              Resume
+            </h2>
+            <p className="mt-2 rounded-2xl border border-peach/70 bg-white/80 p-3 font-arima text-xs leading-relaxed text-brown">
               Your PDF resume is securely stored for WiTCON attendee opportunities.
             </p>
-          </InfoCard>
-          <InfoCard title="WiTCON Resources">
-            <ResourceButton label="WiCS Discord" href="https://discord.gg/wicsfiu" />
-            <ResourceButton
-              label="WiCS LinkedIn"
-              href="https://www.linkedin.com/company/wicsatfiu/"
-            />
-            <ResourceButton label="WiCS Instagram" href="https://instagram.com/wicsfiu" />
-          </InfoCard>
+          </section>
+        </div>
+
+        {/* Bottom Row: Academic Info + Contact & Social / Resources */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <section className="rounded-3xl border border-soft-green bg-cream/95 p-5 shadow-md backdrop-blur-xs sm:p-6">
+            <h2 className="mb-3.5 font-the-seasons text-lg font-bold tracking-tight text-dark-green">
+              Academic Information
+            </h2>
+
+            <div className="space-y-2">
+              <InfoRow label="Major" value={profile.fieldOfStudy} />
+              <InfoRow label="School" value={profile.school} />
+              <InfoRow label="Level of Study" value={profile.levelOfStudy} />
+              <InfoRow label="Year" value={profile.yearLevel} />
+            </div>
+          </section>
+
+          <div className="flex flex-col gap-5">
+            <section className="relative rounded-3xl border border-soft-lavender bg-cream/95 p-5 shadow-md backdrop-blur-xs sm:p-6">
+              <img
+                src={cellphoneSticker}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-8 right-4 w-16 sm:w-20 -rotate-6 drop-shadow-sm select-none"
+              />
+
+              <h2 className="mb-3.5 font-the-seasons text-lg font-bold tracking-tight text-purple">
+                Contact &amp; Social
+              </h2>
+
+              <div className="space-y-2">
+                <InfoRow label="Email" value={profile.email} />
+                <InfoRow label="LinkedIn" value={profile.linkedin} isLink />
+                <InfoRow label="GitHub" value={profile.github} isLink />
+                <InfoRow label="Discord" value={profile.discord} />
+              </div>
+            </section>
+
+            <section className="rounded-3xl border border-soft-blue bg-cream/95 p-5 shadow-md backdrop-blur-xs sm:p-6">
+              <h2 className="mb-3 font-the-seasons text-lg font-bold tracking-tight text-blue">
+                WiTCON Resources
+              </h2>
+
+              <div className="space-y-2">
+                <ResourceButton label="WiCS Discord" href="https://discord.gg/wicsfiu" />
+                <ResourceButton
+                  label="WiCS LinkedIn"
+                  href="https://www.linkedin.com/company/wicsatfiu/"
+                />
+                <ResourceButton label="WiCS Instagram" href="https://instagram.com/wicsfiu" />
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </main>
-  );
-}
-
-function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-3xl border border-witcon-deep-forest/10 bg-white p-5 shadow-sm sm:p-6">
-      <h2 className="mb-5 font-display text-xl font-bold text-witcon-deep-forest">{title}</h2>
-      <div className="space-y-3">{children}</div>
-    </section>
   );
 }
 
@@ -159,8 +223,8 @@ function InfoRow({
 }) {
   if (!value) return null;
   return (
-    <div className="flex flex-col gap-1 rounded-2xl bg-witcon-cream px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
-      <span className="w-36 shrink-0 text-xs font-semibold uppercase tracking-wide text-witcon-deep-forest/55">
+    <div className="flex flex-col gap-0.5 rounded-2xl border border-peach/60 bg-white/80 px-3.5 py-2 sm:flex-row sm:items-center sm:gap-3">
+      <span className="w-28 shrink-0 font-arima text-[11px] font-semibold uppercase tracking-wider text-light-brown">
         {label}
       </span>
       {isLink ? (
@@ -168,12 +232,12 @@ function InfoRow({
           href={value.startsWith('http') ? value : `https://${value}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="truncate text-sm font-medium text-witcon-pink underline"
+          className="truncate font-arima text-xs font-medium text-hot-pink underline decoration-pink/60 underline-offset-4 transition hover:text-burgundy"
         >
           {value}
         </a>
       ) : (
-        <span className="truncate text-sm font-medium text-witcon-deep-forest">{value}</span>
+        <span className="truncate font-arima text-xs font-medium text-brown">{value}</span>
       )}
     </div>
   );
@@ -185,7 +249,7 @@ function ResourceButton({ label, href }: { label: string; href: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full items-center justify-between rounded-2xl bg-witcon-cream px-4 py-3 text-sm font-semibold text-witcon-deep-forest transition hover:bg-witcon-sage/20"
+      className="flex w-full items-center justify-between rounded-2xl border border-peach/70 bg-white/85 px-3.5 py-2 font-arima text-xs font-semibold text-brown transition hover:border-pink hover:bg-peach/25 hover:text-hot-pink"
     >
       <span>{label}</span>
       <span aria-hidden="true">↗</span>
