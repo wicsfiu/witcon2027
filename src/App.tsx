@@ -19,10 +19,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div
-          className="flex min-h-screen flex-col bg-cover bg-center bg-repeat-y"
-          
-        >
+        
           <Navbar />
 
           <main className="flex-1">
@@ -47,7 +44,6 @@ function App() {
           </main>
 
           <Footer />
-        </div>
       </AuthProvider>
     </BrowserRouter>
   );
