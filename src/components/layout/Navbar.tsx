@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { signOut } from '../../data/auth';
 import { hasRegistration } from '../../data/registration';
+import witcon27Logo from '../../assets/stickers/witcon27.svg';
 
 const publicLinks = [
   { label: 'Home', path: '/' },
@@ -73,7 +74,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-witcon-deep-forest/10 bg-witcon-cream/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-white/20 bg-purple/25 backdrop-blur-lg">
       <nav
         className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
         aria-label="Main navigation"
@@ -83,7 +84,11 @@ export default function Navbar() {
           onClick={closeMenu}
           className="rounded-md font-display text-xl font-bold text-witcon-deep-forest transition-colors hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-2xl"
         >
-          WiTCON
+          <img
+            src={witcon27Logo}
+            alt="WiTCON 2027 Logo"
+            className="h-20 w-25"
+          />
           <span className="sr-only"> Home</span>
         </Link>
 
@@ -130,7 +135,7 @@ export default function Navbar() {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="border-t border-witcon-deep-forest/10 bg-witcon-cream px-4 py-4 md:hidden"
+          className="border-t border-white/20 bg-purple/30 px-4 py-4 backdrop-blur-lg md:hidden"
         >
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
             {navLinks.map((link) => (

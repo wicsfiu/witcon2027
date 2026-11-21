@@ -5,6 +5,7 @@ import { signIn, signInWithGoogle } from '../data/auth';
 import { hasRegistration } from '../data/registration';
 import { supabase } from '../lib/supabaseClient';
 import Header from '../components/text/Header';
+import witcon2027Background from '../assets/witcon2027_background.webp';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -74,8 +75,9 @@ export default function Login() {
   }
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center px-4 py-12 sm:px-6">
-      <div className="max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
+    <section className="flex min-h-[70vh] items-center justify-center px-4 py-12 sm:px-6"
+      style={{ backgroundImage: `url(${witcon2027Background})` }}>
+      <div className="max-w-md rounded-3xl border border-light-brown bg-white p-8 shadow-sm">
         <h1 className="font-display text-4xl font-bold text-witcon-deep-forest">Log in</h1>
 
         <p className="mt-2 text-sm text-witcon-brown">Welcome back to WiTCON 2027.</p>
@@ -123,7 +125,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loginLoading || googleLoading}
-            className="w-full rounded-full bg-witcon-forest px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-full bg-pink px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loginLoading ? 'Logging in…' : 'Log in'}
           </button>
@@ -139,7 +141,7 @@ export default function Login() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={loginLoading || registerLoading || googleLoading}
-          className="w-full rounded-full border border-witcon-forest px-6 py-3 font-semibold text-witcon-forest transition hover:bg-witcon-sage/20 focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-full bg-pink border border-peach px-6 py-3 font-semibold text-white transition hover:bg-witcon-sage/20 focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {googleLoading ? 'Connecting to Google…' : 'Continue with Google'}
         </button>
@@ -180,7 +182,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={registerLoading || googleLoading || loginLoading}
-            className="w-full rounded-full bg-witcon-forest px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-full bg-pink px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {registerLoading ? 'Continuing…' : 'Continue'}
           </button>

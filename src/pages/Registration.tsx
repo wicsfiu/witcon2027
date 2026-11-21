@@ -9,6 +9,7 @@ import {
   hasRegistration,
   uploadResume,
 } from '../data/registration.ts';
+import witcon2027Background from '../assets/witcon2027_background.webp';
 
 // Same rules as the check constraints on the registrations table
 const LINKEDIN_PATTERN = /^https:\/\/([a-z]+\.)?linkedin\.com\//i;
@@ -332,7 +333,7 @@ export default function Registration() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-witcon-forest px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-full bg-pink px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? 'Creating account…' : 'Create account'}
             </button>
@@ -367,7 +368,8 @@ export default function Registration() {
 
   return (
     <section className="px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl"
+          style={{ backgroundImage: `url(${witcon2027Background})` }}>
         <div className="mb-8 text-center">
           <h1 className="font-display text-4xl font-bold text-witcon-deep-forest sm:text-5xl">
             Registration
