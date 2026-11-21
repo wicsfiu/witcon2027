@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signIn, signInWithGoogle } from '../data/auth';
 import { hasRegistration } from '../data/registration';
 import { supabase } from '../lib/supabaseClient';
-import Header from '../components/text/Header';
 import witcon2027Background from '../assets/witcon2027_background.webp';
+import keyboardSticker from '../assets/stickers/keyboard.svg';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -75,118 +75,167 @@ export default function Login() {
   }
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center px-4 py-12 sm:px-6"
-      style={{ backgroundImage: `url(${witcon2027Background})` }}>
-      <div className="max-w-md rounded-3xl border border-light-brown bg-white p-8 shadow-sm">
-        <h1 className="font-display text-4xl font-bold text-witcon-deep-forest">Log in</h1>
+    <section
+      className="relative flex min-h-screen items-center justify-center bg-cream bg-cover bg-center px-4 py-16 sm:px-6"
+      style={{ backgroundImage: `url(${witcon2027Background})` }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-cream/35" aria-hidden="true" />
 
-        <p className="mt-2 text-sm text-witcon-brown">Welcome back to WiTCON 2027.</p>
+      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center justify-center gap-5 md:flex-row md:items-stretch md:gap-6">
+        {/* Log In Card */}
+        <div className="relative w-full max-w-sm flex-1 rounded-3xl border border-peach bg-cream/95 p-6 shadow-md backdrop-blur-xs">
+          {/* Larger mobile sticker perched on the top-right corner */}
+          <img
+            src={keyboardSticker}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-12 right-2 w-36 rotate-6 drop-shadow-sm select-none md:hidden"
+          />
 
-        <form onSubmit={handleLoginSubmit} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-witcon-brown">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
-            />
-          </div>
+          <h1 className="font-the-seasons text-xl sm:text-2xl font-bold tracking-tight text-brown">
+            Log in
+          </h1>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+          <p className="mt-1 font-arima text-xs text-light-brown">
+            Welcome back to WiTCON 2027.
+          </p>
+
+          <form onSubmit={handleLoginSubmit} className="mt-4 space-y-3">
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-1 block font-arima text-[11px] sm:text-xs font-semibold text-brown"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@fiu.edu"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-input !py-2 !text-xs"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1 block font-arima text-[11px] sm:text-xs font-semibold text-brown"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="••••••••"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-input !py-2 !text-xs"
+              />
+            </div>
+
+            {loginError && (
+              <p role="alert" className="font-arima text-[11px] font-medium text-burgundy">
+                {loginError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loginLoading || googleLoading}
+              className="w-full cursor-pointer rounded-full bg-pink px-5 py-2 font-arima text-xs font-semibold tracking-wide text-white shadow-sm transition hover:bg-hot-pink focus:outline-none focus:ring-2 focus:ring-medium-pink focus:ring-offset-2 focus:ring-offset-cream disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
-            />
-          </div>
+              {loginLoading ? 'Logging in…' : 'Log in'}
+            </button>
+          </form>
 
-          {loginError && (
-            <p role="alert" className="text-sm text-witcon-terracotta">
-              {loginError}
-            </p>
-          )}
+          <div className="my-3.5 flex items-center gap-3 font-arima text-[10px] uppercase tracking-wider text-light-brown">
+            <span className="h-px flex-1 bg-peach" />
+            or
+            <span className="h-px flex-1 bg-peach" />
+          </div>
 
           <button
-            type="submit"
-            disabled={loginLoading || googleLoading}
-            className="w-full rounded-full bg-pink px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loginLoading || registerLoading || googleLoading}
+            className="w-full cursor-pointer rounded-full border border-light-brown bg-white px-5 py-2 font-arima text-xs font-semibold text-brown shadow-2xs transition hover:bg-light-yellow/60 focus:outline-none focus:ring-2 focus:ring-peach focus:ring-offset-2 focus:ring-offset-cream disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loginLoading ? 'Logging in…' : 'Log in'}
+            {googleLoading ? 'Connecting to Google…' : 'Continue with Google'}
           </button>
-        </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-witcon-brown/70">
-          <span className="h-px flex-1 bg-witcon-sage" />
-          or
-          <span className="h-px flex-1 bg-witcon-sage" />
+          <div className="mt-4 border-t border-peach/70 pt-3 font-arima text-[11px] text-light-brown">
+            <Link
+              to="/forgot-password"
+              className="font-medium text-brown underline decoration-pink/60 underline-offset-4 transition hover:text-hot-pink"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          disabled={loginLoading || registerLoading || googleLoading}
-          className="w-full rounded-full bg-pink border border-peach px-6 py-3 font-semibold text-white transition hover:bg-witcon-sage/20 focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {googleLoading ? 'Connecting to Google…' : 'Continue with Google'}
-        </button>
-
-        <p className="mt-6 text-sm text-witcon-brown">
-          <Link to="/forgot-password" className="underline">
-            Forgot password?
-          </Link>
-          {' · '}
-        </p>
-      </div>
-
-      <div className="max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
-        <Header className="mb-4">Register</Header>
-
-        <form onSubmit={handleRegisterSubmit} className="mt-6 space-y-4">
+        {/* Register Card */}
+        <div className="relative flex w-full max-w-sm flex-1 flex-col justify-between rounded-3xl border border-peach bg-cream/95 p-6 shadow-md backdrop-blur-xs">
           <div>
-            <label htmlFor="register-email" className="mb-1.5 block text-sm font-semibold text-witcon-brown">
-              Email
-            </label>
-            <input
-              id="register-email"
-              type="email"
-              autoComplete="email"
-              required
-              value={registerEmail}
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              className="form-input"
-            />
+            <h2 className="font-the-seasons text-xl sm:text-2xl font-bold tracking-tight text-brown">
+              Register
+            </h2>
+
+            <p className="mt-1 font-arima text-xs text-light-brown">
+              New to WiTCON? Enter your email to get started.
+            </p>
+
+            <form onSubmit={handleRegisterSubmit} className="mt-4 space-y-3">
+              <div>
+                <label
+                  htmlFor="register-email"
+                  className="mb-1 block font-arima text-[11px] sm:text-xs font-semibold text-brown"
+                >
+                  Email
+                </label>
+                <input
+                  id="register-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@fiu.edu"
+                  required
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  className="form-input !py-2 !text-xs"
+                />
+              </div>
+
+              {registerError && (
+                <p role="alert" className="font-arima text-[11px] font-medium text-burgundy">
+                  {registerError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={registerLoading || googleLoading || loginLoading}
+                className="w-full cursor-pointer rounded-full bg-pink px-5 py-2 font-arima text-xs font-semibold tracking-wide text-white shadow-sm transition hover:bg-hot-pink focus:outline-none focus:ring-2 focus:ring-medium-pink focus:ring-offset-2 focus:ring-offset-cream disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {registerLoading ? 'Continuing…' : 'Continue'}
+              </button>
+            </form>
           </div>
 
-          {registerError && (
-            <p role="alert" className="text-sm text-witcon-terracotta">
-              {registerError}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={registerLoading || googleLoading || loginLoading}
-            className="w-full rounded-full bg-pink px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {registerLoading ? 'Continuing…' : 'Continue'}
-          </button>
-        </form>
+          {/* Larger desktop sticker filling the bottom whitespace of the Register card */}
+          <div className="mt-4 hidden justify-center md:flex">
+            <img
+              src={keyboardSticker}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none w-56 lg:w-64 -rotate-3 drop-shadow-sm select-none"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
