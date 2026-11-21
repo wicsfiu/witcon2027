@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-witcon-deep-forest px-4 py-10 text-witcon-cream sm:px-6 lg:px-8">
+    <footer className="border-t border-white/20 bg-witcon-deep-forest/70 px-4 py-10 text-witcon-cream backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}

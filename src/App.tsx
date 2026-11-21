@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Footer from './components/layout/Footer';
@@ -14,12 +13,13 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
 import AuthCallback from './pages/AuthCallback';
+import witcon2027Background from './assets/witcon2027_background.webp';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="flex min-h-screen flex-col">
+        
           <Navbar />
 
           <main className="flex-1">
@@ -44,7 +44,6 @@ function App() {
           </main>
 
           <Footer />
-        </div>
       </AuthProvider>
     </BrowserRouter>
   );

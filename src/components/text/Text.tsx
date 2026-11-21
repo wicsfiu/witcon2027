@@ -8,7 +8,7 @@ interface TextProps {
 
 export default function Text({ children, className = "" }: TextProps) {
   return (
-    <p className={twMerge("text-base text-primary font-normal  text-witcon-deep-forest/80", className)}>
+    <p className={twMerge("text-base text-primary font-normal font-arima", className)}>
       {children}
     </p>
   );

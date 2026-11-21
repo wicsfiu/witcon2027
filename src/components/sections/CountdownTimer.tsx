@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import flowerGraphic from "../../assets/stickers/flower.svg";
+import Header from "../text/Header";
+import witcon2027 from "../../assets/witcon2027_background.webp";
 
 const TARGET_DATE = new Date("March 26, 2027 09:00:00").getTime();
 
@@ -45,12 +47,18 @@ export default function CountdownTimer() {
   ];
 
   return (
-    <section className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center bg-transparent px-6 py-16 md:px-16 md:py-24">
+    <section className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center bg-transparent px-6 py-16 md:px-16 md:py-24"
+      style={{
+        backgroundImage: `url(${witcon2027})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}>
       
-      {/* Header Text */}
-      <h2 className="mb-10 text-center font-emilys-candy text-3xl tracking-wide text-[color:var(--color-hot-pink)] sm:text-4xl md:mb-12 md:text-5xl">
+      <Header className="mb-10 text-center text-pink">
         Begins In
-      </h2>
+      </Header>
+      {/* Header Text */}
 
       {/* Grid for the 4 time units */}
       <div className="grid w-full max-w-3xl grid-cols-2 justify-items-center gap-5 sm:gap-6 md:max-w-4xl md:grid-cols-4 md:gap-8">
