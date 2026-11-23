@@ -50,10 +50,10 @@ export default function Navbar() {
     : publicLinks;
 
   const linkClass =
-    'inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest';
+    'inline-flex items-center justify-center rounded-full px-4 py-2 font-arima text-xs font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-sm';
 
   const mobileLinkClass =
-    'flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest';
+    'flex w-full items-center rounded-xl px-4 py-3 text-left font-arima text-xs font-semibold leading-5 text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-sm';
 
   function closeMenu() {
     setIsOpen(false);
@@ -82,7 +82,7 @@ export default function Navbar() {
         <Link
           to="/"
           onClick={closeMenu}
-          className="rounded-md font-display text-xl font-bold text-witcon-deep-forest transition-colors hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-2xl"
+          className="rounded-md font-the-seasons text-xl font-bold text-witcon-deep-forest transition-colors hover:text-witcon-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest sm:text-2xl"
         >
           <img
             src={witcon27Logo}
@@ -119,7 +119,7 @@ export default function Navbar() {
         {/* Mobile menu toggle */}
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl font-arima text-witcon-deep-forest transition-colors hover:bg-witcon-sage/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-witcon-forest md:hidden"
           onClick={() => setIsOpen((current) => !current)}
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
@@ -169,7 +169,7 @@ export default function Navbar() {
               ))}
 
             {logoutError && (
-              <p role="alert" className="px-4 py-2 text-sm text-witcon-terracotta">
+              <p role="alert" className="px-4 py-2 font-arima text-xs text-witcon-terracotta sm:text-sm">
                 {logoutError}
               </p>
             )}
@@ -180,7 +180,7 @@ export default function Navbar() {
       {logoutError && !isOpen && (
         <p
           role="alert"
-          className="border-t border-witcon-deep-forest/10 px-4 py-2 text-center text-sm text-witcon-terracotta"
+          className="border-t border-witcon-deep-forest/10 px-4 py-2 text-center font-arima text-xs text-witcon-terracotta sm:text-sm"
         >
           {logoutError}
         </p>

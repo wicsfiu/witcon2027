@@ -3,9 +3,6 @@
 @import 'tailwindcss';
 @tailwind utilities;
 
-
-
-
 /* Please consider this file like you would a globals.css file, these are CSS styling settings that apply to the entirety of the page */
 
 @theme {
@@ -57,9 +54,13 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: var(--color-cream);
+  color: var(--color-brown);
+  font-family: var(--font-arima);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -98,9 +99,9 @@ button {
   border: 1px solid rgba(110, 65, 39, 0.18);
   background: rgba(255, 255, 255, 0.82);
   padding: 0.6rem 0.8rem;
-  font-family: var(--font-body);
+  font-family: var(--font-arima);
   font-size: 0.875rem;
-  color: var(--color-witcon-brown);
+  color: var(--color-brown);
   outline: none;
   transition: all 150ms ease;
 }
@@ -110,7 +111,7 @@ button {
 }
 
 .form-input:focus {
-  border-color: var(--color-witcon-pink);
+  border-color: var(--color-pink);
   box-shadow: 0 0 0 2px rgba(250, 162, 195, 0.35);
 }
 
