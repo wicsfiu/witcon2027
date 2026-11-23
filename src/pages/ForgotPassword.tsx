@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { requestPasswordReset } from '../data/auth';
+import witcon2027Background from '../assets/witcon2027_background.webp';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -19,23 +20,35 @@ export default function ForgotPassword() {
   }
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center px-4 py-12 sm:px-6">
-      <div className="w-full max-w-md rounded-3xl border border-witcon-sage bg-white p-8 shadow-sm">
-        <h1 className="font-display text-4xl font-bold text-witcon-deep-forest">
+    <section
+      className="relative flex min-h-screen items-center justify-center bg-cream bg-cover bg-center px-4 py-14 sm:px-6"
+      style={{ backgroundImage: `url(${witcon2027Background})` }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-cream/35" aria-hidden="true" />
+
+      <div className="relative z-10 w-full max-w-sm rounded-3xl border border-peach bg-cream/95 p-6 shadow-md backdrop-blur-xs">
+        <h1 className="font-the-seasons text-xl sm:text-2xl font-bold tracking-tight text-brown">
           Reset your password
         </h1>
 
+        <p className="mt-1 font-arima text-xs text-light-brown">
+          Enter your email and we&apos;ll send a reset link if an account exists.
+        </p>
+
         {status === 'sent' ? (
-          <p role="status" className="mt-4 text-witcon-brown">
+          <p
+            role="status"
+            className="mt-4 rounded-2xl border border-peach/70 bg-white/80 p-3.5 font-arima text-xs leading-relaxed text-brown"
+          >
             If that email has an account, reset instructions may arrive in your inbox. We cannot
             confirm delivery, so check your spam folder too.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
             <div>
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-sm font-semibold text-witcon-brown"
+                className="mb-1 block font-arima text-[11px] sm:text-xs font-semibold text-brown"
               >
                 Email
               </label>
@@ -43,15 +56,16 @@ export default function ForgotPassword() {
                 id="email"
                 type="email"
                 autoComplete="email"
+                placeholder="you@fiu.edu"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
+                className="form-input !py-2 !text-xs"
               />
             </div>
 
             {status === 'error' && (
-              <p role="alert" className="text-sm text-witcon-terracotta">
+              <p role="alert" className="font-arima text-[11px] font-medium text-burgundy">
                 Something went wrong. Please try again in a few minutes.
               </p>
             )}
@@ -59,18 +73,21 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full rounded-full bg-witcon-forest px-6 py-3 font-semibold text-white shadow-md transition hover:bg-witcon-deep-forest focus:outline-none focus:ring-2 focus:ring-witcon-sage focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full cursor-pointer rounded-full bg-pink px-5 py-2 font-arima text-xs font-semibold tracking-wide text-white shadow-sm transition hover:bg-hot-pink focus:outline-none focus:ring-2 focus:ring-medium-pink focus:ring-offset-2 focus:ring-offset-cream disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === 'loading' ? 'Sending…' : 'Send reset link'}
             </button>
           </form>
         )}
 
-        <p className="mt-6 text-sm text-witcon-brown">
-          <Link to="/login" className="underline">
+        <div className="mt-4 border-t border-peach/70 pt-3 font-arima text-[11px] text-light-brown">
+          <Link
+            to="/login"
+            className="font-medium text-brown underline decoration-pink/60 underline-offset-4 transition hover:text-hot-pink"
+          >
             Back to log in
           </Link>
-        </p>
+        </div>
       </div>
     </section>
   );
